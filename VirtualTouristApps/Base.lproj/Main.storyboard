@@ -40,10 +40,10 @@
             </objects>
             <point key="canvasLocation" x="1031.8840579710145" y="104.46428571428571"/>
         </scene>
-        <!--Collection Photos View Controller-->
+        <!--Album View Controller-->
         <scene sceneID="SxI-bd-avB">
             <objects>
-                <viewController id="3BI-I9-zEt" customClass="CollectionPhotosViewController" customModule="VirtualTouristApps" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="3BI-I9-zEt" customClass="AlbumViewController" customModule="VirtualTouristApps" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="yrR-9j-und">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -99,7 +99,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="aPk-A9-rrG" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="n5a-5d-mKV">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

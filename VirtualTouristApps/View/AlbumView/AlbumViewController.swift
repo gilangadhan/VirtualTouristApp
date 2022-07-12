@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CollectionPhotosViewController: UIViewController {
+class AlbumViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()

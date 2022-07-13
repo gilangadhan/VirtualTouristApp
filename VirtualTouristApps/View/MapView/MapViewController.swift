@@ -8,8 +8,8 @@
 import UIKit
 import MapKit
 
-class MapViewController: UIViewController, CLLocationManagerDelegate{
-  private lazy var dataProvider: DataProvider = { return DataProvider() }()
+class MapViewController: UIViewController, CLLocationManagerDelegate {
+  private lazy var dataProvider: LocaleProvider = { return LocaleProvider() }()
   private var locations: [LocationEntity] = []
   private let newPin = MKPointAnnotation()
 
@@ -19,7 +19,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
     super.viewDidLoad()
 
     mapView.delegate = self
-    let longPress = UILongPressGestureRecognizer(target: self, action: #selector(mapLongPress(_:))) // colon needs to pass through info
+    let longPress = UILongPressGestureRecognizer(target: self, action: #selector(mapLongPress(_:)))
     longPress.minimumPressDuration = 1.0
     mapView.addGestureRecognizer(longPress)
   }
@@ -30,8 +30,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
   }
 
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    if segue.identifier == "moveToDetail" {
-      _ = segue.destination as? AlbumViewController
+    if segue.identifier == "moveToDetail", let idLocation = sender as? String {
+      let viewController = segue.destination as? AlbumViewController
+      viewController?.idLocation = idLocation
     }
   }
 
@@ -45,7 +46,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
   private func loadLocations() {
     dataProvider.getAllLocations { results in
       self.locations = results
-      print(results.count)
       let annotations = results.map { location -> CustomPointAnnotation in
         let annotation = CustomPointAnnotation()
         annotation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
@@ -79,8 +79,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate{
 extension MapViewController: MKMapViewDelegate {
   func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
     if let annotation = view.annotation as? CustomPointAnnotation {
-//      performSegue(withIdentifier: "moveToDetail", sender: nil)
-      print(annotation.tag!)
+      performSegue(withIdentifier: "moveToDetail", sender: annotation.tag)
     }
   }
 }

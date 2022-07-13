@@ -15,7 +15,10 @@
 		2A60D701287A3AEA00612C80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A60D700287A3AEA00612C80 /* Assets.xcassets */; };
 		2A60D704287A3AEA00612C80 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A60D702287A3AEA00612C80 /* LaunchScreen.storyboard */; };
 		2A60D70C287BA2A700612C80 /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60D70B287BA2A700612C80 /* AlbumViewController.swift */; };
-		2A60D70F287DCA8600612C80 /* DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60D70E287DCA8600612C80 /* DataProvider.swift */; };
+		2A60D70F287DCA8600612C80 /* LocaleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60D70E287DCA8600612C80 /* LocaleProvider.swift */; };
+		2AFD12BA287EA7CE00A14967 /* DataDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12B9287EA7CE00A14967 /* DataDummy.swift */; };
+		2AFD12BC287EB56D00A14967 /* NetworkProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12BB287EB56D00A14967 /* NetworkProvider.swift */; };
+		2AFD12C1287EB69200A14967 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 2AFD12C0287EB69200A14967 /* .swiftlint.yml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +32,10 @@
 		2A60D703287A3AEA00612C80 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2A60D705287A3AEA00612C80 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2A60D70B287BA2A700612C80 /* AlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
-		2A60D70E287DCA8600612C80 /* DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
+		2A60D70E287DCA8600612C80 /* LocaleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleProvider.swift; sourceTree = "<group>"; };
+		2AFD12B9287EA7CE00A14967 /* DataDummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDummy.swift; sourceTree = "<group>"; };
+		2AFD12BB287EB56D00A14967 /* NetworkProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvider.swift; sourceTree = "<group>"; };
+		2AFD12C0287EB69200A14967 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +52,7 @@
 		2A60D6E8287A3AE500612C80 = {
 			isa = PBXGroup;
 			children = (
+				2AFD12C0287EB69200A14967 /* .swiftlint.yml */,
 				2A60D6F3287A3AE500612C80 /* VirtualTouristApps */,
 				2A60D6F2287A3AE500612C80 /* Products */,
 			);
@@ -76,8 +83,10 @@
 		2A60D70D287DCA5F00612C80 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				2AFD12B9287EA7CE00A14967 /* DataDummy.swift */,
+				2A60D70E287DCA8600612C80 /* LocaleProvider.swift */,
+				2AFD12BB287EB56D00A14967 /* NetworkProvider.swift */,
 				2A60D6FD287A3AE500612C80 /* VirtualTouristApps.xcdatamodeld */,
-				2A60D70E287DCA8600612C80 /* DataProvider.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -126,6 +135,7 @@
 				2A60D6ED287A3AE500612C80 /* Sources */,
 				2A60D6EE287A3AE500612C80 /* Frameworks */,
 				2A60D6EF287A3AE500612C80 /* Resources */,
+				2AFD12BD287EB59800A14967 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -174,6 +184,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AFD12C1287EB69200A14967 /* .swiftlint.yml in Resources */,
 				2A60D704287A3AEA00612C80 /* LaunchScreen.storyboard in Resources */,
 				2A60D701287A3AEA00612C80 /* Assets.xcassets in Resources */,
 				2A60D6FC287A3AE500612C80 /* Main.storyboard in Resources */,
@@ -182,15 +193,37 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2AFD12BD287EB59800A14967 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "swiftlint\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		2A60D6ED287A3AE500612C80 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A60D70F287DCA8600612C80 /* DataProvider.swift in Sources */,
+				2AFD12BA287EA7CE00A14967 /* DataDummy.swift in Sources */,
+				2A60D70F287DCA8600612C80 /* LocaleProvider.swift in Sources */,
 				2A60D6FF287A3AE500612C80 /* VirtualTouristApps.xcdatamodeld in Sources */,
 				2A60D6F9287A3AE500612C80 /* MapViewController.swift in Sources */,
 				2A60D6F5287A3AE500612C80 /* AppDelegate.swift in Sources */,
+				2AFD12BC287EB56D00A14967 /* NetworkProvider.swift in Sources */,
 				2A60D6F7287A3AE500612C80 /* SceneDelegate.swift in Sources */,
 				2A60D70C287BA2A700612C80 /* AlbumViewController.swift in Sources */,
 			);

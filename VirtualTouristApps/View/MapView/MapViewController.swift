@@ -9,7 +9,8 @@ import UIKit
 import MapKit
 
 class MapViewController: UIViewController, CLLocationManagerDelegate {
-  private lazy var dataProvider: LocaleProvider = { return LocaleProvider() }()
+  private lazy var repository: VirtualToursitRepository = { return Injection().provideRepository() }()
+
   private var locations: [LocationEntity] = []
   private let newPin = MKPointAnnotation()
 
@@ -44,7 +45,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
   }
 
   private func loadLocations() {
-    dataProvider.getAllLocations { results in
+    repository.getAllLocations { results in
       self.locations = results
       let annotations = results.map { location -> CustomPointAnnotation in
         let annotation = CustomPointAnnotation()
@@ -57,7 +58,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
   }
 
   private func addLocation(by coordinate: CLLocationCoordinate2D) {
-    dataProvider.addLocation(longitude: coordinate.longitude, latitude: coordinate.latitude) { idLocation in
+    repository.addLocation(longitude: coordinate.longitude, latitude: coordinate.latitude) { idLocation in
       let annotation = CustomPointAnnotation()
       annotation.coordinate = coordinate
       annotation.tag = "\(idLocation)"

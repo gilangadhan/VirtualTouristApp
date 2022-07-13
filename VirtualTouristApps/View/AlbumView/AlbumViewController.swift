@@ -10,44 +10,56 @@ import UIKit
 import MapKit
 
 class AlbumViewController: UIViewController {
-  private lazy var dataProvider: LocaleProvider = { return LocaleProvider() }()
+  private lazy var repository: VirtualToursitRepository = { return Injection().provideRepository() }()
 
   private var location: LocationEntity?
-  private var albums: [AlbumEntity] = []
-  private var photos: [Photo] = []
+  private var albums: [AlbumModel] = []
 
   @IBOutlet var mapView: MKMapView!
+  @IBOutlet var buttonAddCollection: UIButton!
+  @IBOutlet var collectionView: UICollectionView!
 
   var idLocation: String?
 
   override func viewDidLoad() {
     super.viewDidLoad()
+
+    collectionView.dataSource = self
+    collectionView.delegate = self
+    collectionView.allowsMultipleSelection = true
+
   }
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     if let id = idLocation {
-      dataProvider.getAllAlbum(by: id) { location, albums in
-        self.albums = albums
+      repository.loadLocation(by: id) { location in
         self.location = location
-        self.getPhotos()
         self.updateMap()
+        self.repository.loadOnlyFromNetwork(location: location) { result in
+          switch result {
+          case .failure(let error):
+            print(error.localizedDescription)
+          case .success(let photos):
+            self.albums = photos
+            DispatchQueue.main.async {
+              self.unselectAllSelectedCollectionViewCell()
+              self.collectionView.reloadData()
+            }
+          }
+        }
       }
     }
   }
 
-  func getPhotos() {
-    let networkProvider = NetworkProvider()
-    guard let result = location else { return }
-    networkProvider.getAllPhotos(latitude: result.latitude, longitude: result.longitude) { result in
-      switch result {
-      case .failure(let error):
-        print(error)
-      case .success(let photos):
-        self.photos = photos
-        print(self.photos.count)
-      }
+  @IBAction func addCollection(_ sender: Any) {
+    repository.addCollection(from: albums, by: location!) {
+
     }
+  }
+
+  @IBAction func removeLocation(_ sender: Any) {
+
   }
 
   func updateMap() {
@@ -55,5 +67,60 @@ class AlbumViewController: UIViewController {
     let annotation = CustomPointAnnotation()
     annotation.coordinate = CLLocationCoordinate2D(latitude: result.latitude, longitude: result.longitude)
     self.mapView.addAnnotation(annotation)
+  }
+
+  func unselectAllSelectedCollectionViewCell() {
+    for indexPath in collectionView.indexPathsForSelectedItems! {
+      collectionView.deselectItem(at: indexPath, animated: false)
+      collectionView.cellForItem(at: indexPath)?.contentView.alpha = 1
+    }
+  }
+}
+
+extension AlbumViewController: UICollectionViewDataSource {
+
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    print(albums.count)
+    return albums.count
+  }
+
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    guard let cell = collectionView.dequeueReusableCell(
+      withReuseIdentifier: "AlbumCell",
+      for: indexPath
+    ) as? AlbumCollectionViewCell else {
+      return UICollectionViewCell()
+    }
+    cell.loadImage(url: albums[indexPath.row].imageUrl()) { data in
+      self.albums[indexPath.row].image = data
+    }
+
+    return cell
+  }
+}
+
+extension AlbumViewController: UICollectionViewDelegate {
+
+  func selectedToDeleteFromIndexPath(_ indexPathArray: [IndexPath]) -> [Int] {
+    var selected: [Int] = []
+    for indexPath in indexPathArray {
+      selected.append(indexPath.row)
+    }
+    return selected
+  }
+
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    let cell = collectionView.cellForItem(at: indexPath)
+
+    DispatchQueue.main.async {
+      cell?.contentView.alpha = 0.5
+    }
+  }
+
+  func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    let cell = collectionView.cellForItem(at: indexPath)
+    DispatchQueue.main.async {
+      cell?.contentView.alpha = 1
+    }
   }
 }

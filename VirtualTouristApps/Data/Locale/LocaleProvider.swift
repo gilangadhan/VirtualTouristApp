@@ -8,8 +8,12 @@
 import CoreData
 import UIKit
 
-class LocaleProvider {
-  lazy var persistentContainer: NSPersistentContainer = {
+final class LocaleProvider: NSObject {
+  private override init() { }
+
+  static let sharedInstance: LocaleProvider = LocaleProvider()
+
+  let newTaskContext: NSManagedObjectContext = {
     let container = NSPersistentContainer(name: "VirtualTouristApps")
 
     container.loadPersistentStores { _, error in
@@ -22,23 +26,22 @@ class LocaleProvider {
     container.viewContext.shouldDeleteInaccessibleFaults = true
     container.viewContext.undoManager = nil
 
-    return container
-  }()
-
-  private func newTaskContext() -> NSManagedObjectContext {
-    let taskContext = persistentContainer.newBackgroundContext()
+    let taskContext = container.newBackgroundContext()
     taskContext.undoManager = nil
 
     taskContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     return taskContext
-  }
+  }()
+}
+
+extension LocaleProvider {
 
   func getAllLocations(completion: @escaping(_ locations: [LocationEntity]) -> Void) {
-    let taskContext = newTaskContext()
-    taskContext.perform {
+
+    newTaskContext.perform {
       let fetchRequest = NSFetchRequest<LocationEntity>(entityName: "LocationEntity")
       do {
-        let results = try taskContext.fetch(fetchRequest)
+        let results = try self.newTaskContext.fetch(fetchRequest)
         completion(results)
       } catch let error as NSError {
         print("Could not fetch. \(error), \(error.userInfo)")
@@ -47,47 +50,45 @@ class LocaleProvider {
   }
 
   func getAllAlbum(
-    by idLocation: String,
-    completion: @escaping(_ location: LocationEntity, _ albums: [AlbumEntity]) -> Void
+    by location: LocationEntity,
+    completion: @escaping(_ albums: [AlbumEntity]) -> Void
   ) {
-    let taskContext = newTaskContext()
-    taskContext.perform {
-      self.getLocation(by: idLocation, with: taskContext) { location in
-        let fetchRequest = NSFetchRequest<AlbumEntity>(entityName: "AlbumEntity")
-        fetchRequest.predicate = NSPredicate(format: "location == %@", location)
-        do {
-          let albums = try taskContext.fetch(fetchRequest)
-          completion(location, albums)
-        } catch let error as NSError {
-          print("Could not fetch. \(error), \(error.userInfo)")
-        }
+    newTaskContext.performAndWait {
+      let fetchRequest = NSFetchRequest<AlbumEntity>(entityName: "AlbumEntity")
+      fetchRequest.predicate = NSPredicate(format: "location == %@", location)
+      do {
+        let albums = try self.newTaskContext.fetch(fetchRequest)
+        completion(albums)
+      } catch let error as NSError {
+        print("Could not fetch. \(error), \(error.userInfo)")
       }
     }
   }
 
   func addAlbum(
-    idLocation: String,
-    image: Data,
+    location: LocationEntity,
+    albumModel: AlbumModel,
     completion: @escaping() -> Void
   ) {
-    let taskContext = newTaskContext()
-    taskContext.performAndWait {
-      getLocation(by: idLocation, with: taskContext) { location in
-        if let entity = NSEntityDescription.entity(forEntityName: "AlbumEntity", in: taskContext) {
-          let album = NSManagedObject(entity: entity, insertInto: taskContext)
-          self.getMaxAlbumId(by: location, with: taskContext) { maxId in
-            let idAlbum = maxId+1
-            album.setValue(idAlbum, forKeyPath: "idAlbum")
-            album.setValue(image, forKeyPath: "image")
-            album.setValue(Date(), forKeyPath: "dateDownload")
-            album.setValue(location, forKey: "location")
-            do {
-              try taskContext.save()
-              completion()
-            } catch let error as NSError {
-              print("Could not save. \(error), \(error.userInfo)")
-            }
-          }
+    newTaskContext.performAndWait {
+      if let entity = NSEntityDescription.entity(forEntityName: "AlbumEntity", in: self.newTaskContext) {
+        let album = NSManagedObject(entity: entity, insertInto: self.newTaskContext)
+        album.setValue(albumModel.id, forKeyPath: "idAlbum")
+        album.setValue(albumModel.owner, forKeyPath: "owner")
+        album.setValue(albumModel.secret, forKeyPath: "secret")
+        album.setValue(albumModel.server, forKeyPath: "server")
+        album.setValue(albumModel.farm, forKey: "farm")
+        album.setValue(albumModel.title, forKeyPath: "title")
+        album.setValue(albumModel.ispublic, forKeyPath: "ispublic")
+        album.setValue(albumModel.isfriend, forKeyPath: "isfriend")
+        album.setValue(albumModel.isfamily, forKeyPath: "isfamily")
+        album.setValue(albumModel.image, forKeyPath: "image")
+        album.setValue(location, forKey: "location")
+        do {
+          try self.newTaskContext.save()
+          completion()
+        } catch let error as NSError {
+          print("Could not save. \(error), \(error.userInfo)")
         }
       }
     }
@@ -98,12 +99,11 @@ class LocaleProvider {
     latitude: Double,
     completion: @escaping(_ idLocation: Int) -> Void
   ) {
-    let taskContext = newTaskContext()
     if latitude != 0.0, longitude != 0.0 {
-      taskContext.performAndWait {
-        if let entity = NSEntityDescription.entity(forEntityName: "LocationEntity", in: taskContext) {
-          let location = NSManagedObject(entity: entity, insertInto: taskContext)
-          self.getMaxLocationId(with: taskContext) { id in
+      newTaskContext.performAndWait {
+        if let entity = NSEntityDescription.entity(forEntityName: "LocationEntity", in: self.newTaskContext) {
+          let location = NSManagedObject(entity: entity, insertInto: self.newTaskContext)
+          self.getMaxLocationId(with: self.newTaskContext) { id in
             let idLocation = id+1
             location.setValue(idLocation, forKeyPath: "idLocation")
             location.setValue(latitude, forKeyPath: "latitude")
@@ -111,7 +111,7 @@ class LocaleProvider {
             location.setValue(Date(), forKeyPath: "creationDate")
 
             do {
-              try taskContext.save()
+              try self.newTaskContext.save()
               completion(idLocation)
             } catch let error as NSError {
               print("Could not save. \(error), \(error.userInfo)")
@@ -124,21 +124,22 @@ class LocaleProvider {
 
   func getLocation(
     by idLocation: String,
-    with taskContext: NSManagedObjectContext,
     completion: @escaping(_ location: LocationEntity) -> Void
   ) {
-    let fetchRequest = NSFetchRequest<LocationEntity>(entityName: "LocationEntity")
-    fetchRequest.predicate = NSPredicate(format: "idLocation == %@", idLocation)
-    fetchRequest.fetchLimit = 1
-    do {
-      let lastLocation = try taskContext.fetch(fetchRequest)
-      if let location = lastLocation.first {
-        completion(location)
-      } else {
-        print("Could get LocationEntity by idLocation.")
+    newTaskContext.performAndWait {
+      let fetchRequest = NSFetchRequest<LocationEntity>(entityName: "LocationEntity")
+      fetchRequest.predicate = NSPredicate(format: "idLocation == %@", idLocation)
+      fetchRequest.fetchLimit = 1
+      do {
+        let lastLocation = try self.newTaskContext.fetch(fetchRequest)
+        if let location = lastLocation.first {
+          completion(location)
+        } else {
+          print("Could get LocationEntity by idLocation.")
+        }
+      } catch {
+        print(error.localizedDescription)
       }
-    } catch {
-      print(error.localizedDescription)
     }
   }
 
@@ -180,16 +181,6 @@ class LocaleProvider {
       }
     } catch {
       print(error.localizedDescription)
-    }
-  }
-
-  func addAlbumDummy(completion: @escaping() -> Void) {
-    for album in albumDummies {
-      if let image = album.image {
-        self.addAlbum(idLocation: "1", image: image) {
-          completion()
-        }
-      }
     }
   }
 

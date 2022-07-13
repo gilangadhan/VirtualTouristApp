@@ -7,7 +7,12 @@
 
 import Foundation
 
-class NetworkProvider {
+final class NetworkProvider: NSObject {
+  private override init() { }
+  static let sharedInstance: NetworkProvider =  NetworkProvider()
+}
+
+extension NetworkProvider {
   func getAllPhotos(
     latitude: Double,
     longitude: Double,
@@ -37,6 +42,26 @@ class NetworkProvider {
     }
     task.resume()
   }
+
+  func downloadImage(
+    url: String,
+    completion: @escaping(Result<Data, Error>) -> Void
+  ) {
+    URLSession.shared.dataTask(with: URL(string: url)!) { (data, _, error) in
+      if error == nil {
+        guard let image = data else {
+          completion(.failure(URLError.downloadFailed))
+          return
+        }
+        completion(.success(image))
+      } else {
+        completion(.failure(URLError.invalidResponse))
+      }
+
+    }
+
+    .resume()
+  }
 }
 
 enum URLError: LocalizedError {
@@ -47,6 +72,7 @@ enum URLError: LocalizedError {
   case addressUnreachable(URL)
   case credentialIncorrect
   case invalidInput
+  case downloadFailed
 
   var errorDescription: String? {
     switch self {
@@ -56,6 +82,7 @@ enum URLError: LocalizedError {
     case .noInternet: return "The Internet connection is offline, please try again later."
     case .credentialIncorrect: return "The credentials were incorrect, please check your email or/and your password."
     case .invalidInput: return "Please not use special character."
+    case .downloadFailed: return "Download image failed. Please try again."
     }
   }
 }
@@ -86,18 +113,18 @@ enum Endpoints {
 }
 
 struct FlickrResponses: Codable {
-    let photos: Photos
-    let stat: String
+  let photos: Photos
+  let stat: String
 }
 
 struct Photos: Codable {
-    let page, pages, perpage, total: Int
-    let photo: [Photo]
+  let page, pages, perpage, total: Int
+  let photo: [Photo]
 }
 
 struct Photo: Codable {
-    let id, owner, secret, server: String
-    let farm: Int
-    let title: String
-    let ispublic, isfriend, isfamily: Int
+  let id, owner, secret, server: String
+  let farm: Int
+  let title: String
+  let ispublic, isfriend, isfamily: Int
 }

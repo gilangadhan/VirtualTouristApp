@@ -16,9 +16,13 @@
 		2A60D704287A3AEA00612C80 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A60D702287A3AEA00612C80 /* LaunchScreen.storyboard */; };
 		2A60D70C287BA2A700612C80 /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60D70B287BA2A700612C80 /* AlbumViewController.swift */; };
 		2A60D70F287DCA8600612C80 /* LocaleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60D70E287DCA8600612C80 /* LocaleProvider.swift */; };
-		2AFD12BA287EA7CE00A14967 /* DataDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12B9287EA7CE00A14967 /* DataDummy.swift */; };
 		2AFD12BC287EB56D00A14967 /* NetworkProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12BB287EB56D00A14967 /* NetworkProvider.swift */; };
 		2AFD12C1287EB69200A14967 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 2AFD12C0287EB69200A14967 /* .swiftlint.yml */; };
+		2AFD12C3287F160200A14967 /* VirtualTouristRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12C2287F160200A14967 /* VirtualTouristRepository.swift */; };
+		2AFD12C5287F205900A14967 /* Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12C4287F205900A14967 /* Injection.swift */; };
+		2AFD12CB287F345700A14967 /* AlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12CA287F345700A14967 /* AlbumModel.swift */; };
+		2AFD12CD287F34E300A14967 /* AlbumMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12CC287F34E300A14967 /* AlbumMapper.swift */; };
+		2AFD12CF287F42DE00A14967 /* AlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFD12CE287F42DE00A14967 /* AlbumCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,9 +37,13 @@
 		2A60D705287A3AEA00612C80 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2A60D70B287BA2A700612C80 /* AlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 		2A60D70E287DCA8600612C80 /* LocaleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleProvider.swift; sourceTree = "<group>"; };
-		2AFD12B9287EA7CE00A14967 /* DataDummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDummy.swift; sourceTree = "<group>"; };
 		2AFD12BB287EB56D00A14967 /* NetworkProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvider.swift; sourceTree = "<group>"; };
 		2AFD12C0287EB69200A14967 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		2AFD12C2287F160200A14967 /* VirtualTouristRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTouristRepository.swift; sourceTree = "<group>"; };
+		2AFD12C4287F205900A14967 /* Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Injection.swift; sourceTree = "<group>"; };
+		2AFD12CA287F345700A14967 /* AlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumModel.swift; sourceTree = "<group>"; };
+		2AFD12CC287F34E300A14967 /* AlbumMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumMapper.swift; sourceTree = "<group>"; };
+		2AFD12CE287F42DE00A14967 /* AlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,10 +91,11 @@
 		2A60D70D287DCA5F00612C80 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				2AFD12B9287EA7CE00A14967 /* DataDummy.swift */,
-				2A60D70E287DCA8600612C80 /* LocaleProvider.swift */,
-				2AFD12BB287EB56D00A14967 /* NetworkProvider.swift */,
-				2A60D6FD287A3AE500612C80 /* VirtualTouristApps.xcdatamodeld */,
+				2AFD12C9287F343E00A14967 /* Domain */,
+				2AFD12C8287F2C3B00A14967 /* DI */,
+				2AFD12C7287F2C2300A14967 /* Network */,
+				2AFD12C6287F2C1E00A14967 /* Locale */,
+				2AFD12C2287F160200A14967 /* VirtualTouristRepository.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -120,9 +129,44 @@
 		2A60D715287DD18000612C80 /* AlbumView */ = {
 			isa = PBXGroup;
 			children = (
+				2AFD12CE287F42DE00A14967 /* AlbumCollectionViewCell.swift */,
 				2A60D70B287BA2A700612C80 /* AlbumViewController.swift */,
 			);
 			path = AlbumView;
+			sourceTree = "<group>";
+		};
+		2AFD12C6287F2C1E00A14967 /* Locale */ = {
+			isa = PBXGroup;
+			children = (
+				2A60D70E287DCA8600612C80 /* LocaleProvider.swift */,
+				2A60D6FD287A3AE500612C80 /* VirtualTouristApps.xcdatamodeld */,
+			);
+			path = Locale;
+			sourceTree = "<group>";
+		};
+		2AFD12C7287F2C2300A14967 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				2AFD12BB287EB56D00A14967 /* NetworkProvider.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		2AFD12C8287F2C3B00A14967 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+				2AFD12C4287F205900A14967 /* Injection.swift */,
+			);
+			path = DI;
+			sourceTree = "<group>";
+		};
+		2AFD12C9287F343E00A14967 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				2AFD12CA287F345700A14967 /* AlbumModel.swift */,
+				2AFD12CC287F34E300A14967 /* AlbumMapper.swift */,
+			);
+			path = Domain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,10 +262,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2AFD12BA287EA7CE00A14967 /* DataDummy.swift in Sources */,
+				2AFD12CF287F42DE00A14967 /* AlbumCollectionViewCell.swift in Sources */,
+				2AFD12CD287F34E300A14967 /* AlbumMapper.swift in Sources */,
+				2AFD12C3287F160200A14967 /* VirtualTouristRepository.swift in Sources */,
+				2AFD12CB287F345700A14967 /* AlbumModel.swift in Sources */,
 				2A60D70F287DCA8600612C80 /* LocaleProvider.swift in Sources */,
 				2A60D6FF287A3AE500612C80 /* VirtualTouristApps.xcdatamodeld in Sources */,
 				2A60D6F9287A3AE500612C80 /* MapViewController.swift in Sources */,
+				2AFD12C5287F205900A14967 /* Injection.swift in Sources */,
 				2A60D6F5287A3AE500612C80 /* AppDelegate.swift in Sources */,
 				2AFD12BC287EB56D00A14967 /* NetworkProvider.swift in Sources */,
 				2A60D6F7287A3AE500612C80 /* SceneDelegate.swift in Sources */,

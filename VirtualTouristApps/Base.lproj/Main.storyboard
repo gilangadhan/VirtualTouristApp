@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Map View Controller-->
+        <!--Virtual Tourist Apps-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MapViewController" customModule="VirtualTouristApps" customModuleProvider="target" sceneMemberID="viewController">
@@ -20,18 +20,24 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="TNy-Zn-N63">
                                 <rect key="frame" x="0.0" y="44" width="320" height="436"/>
                             </mapView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="zQR-OO-wbX">
+                                <rect key="frame" x="150" y="230" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="TNy-Zn-N63" secondAttribute="bottom" id="9v5-dY-Fhx"/>
+                            <constraint firstItem="zQR-OO-wbX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="EPS-4R-vZ9"/>
                             <constraint firstItem="TNy-Zn-N63" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="I5T-N0-yx3"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="TNy-Zn-N63" secondAttribute="trailing" id="JKC-kb-gIl"/>
+                            <constraint firstItem="zQR-OO-wbX" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="V2H-c1-9XY"/>
                             <constraint firstItem="TNy-Zn-N63" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="p7x-bm-fVT"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="ndu-uT-Lby"/>
+                    <navigationItem key="navigationItem" title="Virtual Tourist Apps" id="ndu-uT-Lby"/>
                     <connections>
+                        <outlet property="indicatorLoading" destination="zQR-OO-wbX" id="k98-TU-sOT"/>
                         <outlet property="mapView" destination="TNy-Zn-N63" id="maL-UD-G1z"/>
                         <segue destination="3BI-I9-zEt" kind="show" identifier="moveToDetail" id="ksS-Ay-4zp"/>
                     </connections>
@@ -55,9 +61,9 @@
                                 </constraints>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="N5a-Rp-ixO">
-                                <rect key="frame" x="0.0" y="172" width="320" height="308"/>
+                                <rect key="frame" x="5" y="172" width="310" height="308"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="vAC-i2-waJ">
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="I9j-Ez-k6K">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -77,17 +83,27 @@
                                                 <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="7jM-O8-6L0">
                                                     <rect key="frame" x="54" y="54" width="20" height="20"/>
                                                 </activityIndicatorView>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bookmark" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="PFG-lF-s9X">
+                                                    <rect key="frame" x="108" y="0.0" width="20" height="20"/>
+                                                    <color key="tintColor" systemColor="systemOrangeColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="PFG-lF-s9X" secondAttribute="height" multiplier="1:1" id="HBu-0O-xx6"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="bottom" secondItem="KOO-cc-Tsw" secondAttribute="bottom" id="JP5-dl-K5g"/>
+                                                <constraint firstItem="PFG-lF-s9X" firstAttribute="top" secondItem="Rth-Jh-NDg" secondAttribute="top" id="NvV-AS-vc6"/>
                                                 <constraint firstItem="KOO-cc-Tsw" firstAttribute="top" secondItem="Rth-Jh-NDg" secondAttribute="top" id="PRr-2Q-vpi"/>
                                                 <constraint firstItem="7jM-O8-6L0" firstAttribute="centerX" secondItem="Rth-Jh-NDg" secondAttribute="centerX" id="SPW-By-kPl"/>
                                                 <constraint firstItem="7jM-O8-6L0" firstAttribute="centerY" secondItem="Rth-Jh-NDg" secondAttribute="centerY" id="T2q-Vi-JIS"/>
                                                 <constraint firstItem="KOO-cc-Tsw" firstAttribute="leading" secondItem="Rth-Jh-NDg" secondAttribute="leading" id="cvp-pk-Aws"/>
+                                                <constraint firstAttribute="trailing" secondItem="PFG-lF-s9X" secondAttribute="trailing" id="oNc-qQ-CeL"/>
                                                 <constraint firstAttribute="trailing" secondItem="KOO-cc-Tsw" secondAttribute="trailing" id="xOa-Na-tey"/>
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <connections>
+                                            <outlet property="imageFavorite" destination="PFG-lF-s9X" id="aEF-Kk-n7a"/>
                                             <outlet property="imageView" destination="KOO-cc-Tsw" id="VvQ-f7-QPL"/>
                                             <outlet property="indicatorLoading" destination="7jM-O8-6L0" id="Jn2-OB-5hh"/>
                                         </connections>
@@ -101,19 +117,24 @@
                                     <action selector="addCollection:" destination="3BI-I9-zEt" eventType="touchUpInside" id="L3D-sx-8sQ"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="XWp-Li-I9C">
+                                <rect key="frame" x="150" y="230" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="niP-ow-Pji"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="ZF5-as-PNX" firstAttribute="leading" secondItem="niP-ow-Pji" secondAttribute="leading" id="31D-O3-wCv"/>
+                            <constraint firstItem="XWp-Li-I9C" firstAttribute="centerX" secondItem="yrR-9j-und" secondAttribute="centerX" id="7dY-f4-uAS"/>
                             <constraint firstItem="niP-ow-Pji" firstAttribute="trailing" secondItem="BAT-g9-4cf" secondAttribute="trailing" constant="8" id="QRm-Ag-wEU"/>
                             <constraint firstItem="BAT-g9-4cf" firstAttribute="leading" secondItem="niP-ow-Pji" secondAttribute="leading" constant="8" id="R04-0R-0I1"/>
-                            <constraint firstItem="N5a-Rp-ixO" firstAttribute="leading" secondItem="niP-ow-Pji" secondAttribute="leading" id="RSk-Gi-XgA"/>
+                            <constraint firstItem="N5a-Rp-ixO" firstAttribute="leading" secondItem="niP-ow-Pji" secondAttribute="leading" constant="5" id="RSk-Gi-XgA"/>
                             <constraint firstItem="ZF5-as-PNX" firstAttribute="top" secondItem="niP-ow-Pji" secondAttribute="top" id="Tc8-DC-bwf"/>
                             <constraint firstItem="niP-ow-Pji" firstAttribute="bottom" secondItem="BAT-g9-4cf" secondAttribute="bottom" constant="8" id="ZVG-E8-ghL"/>
                             <constraint firstItem="niP-ow-Pji" firstAttribute="trailing" secondItem="ZF5-as-PNX" secondAttribute="trailing" id="eRM-eh-ipL"/>
                             <constraint firstItem="N5a-Rp-ixO" firstAttribute="firstBaseline" secondItem="ZF5-as-PNX" secondAttribute="baseline" constant="8" symbolType="layoutAnchor" id="gEu-cV-Up0"/>
-                            <constraint firstItem="niP-ow-Pji" firstAttribute="trailing" secondItem="N5a-Rp-ixO" secondAttribute="trailing" id="t0n-Tz-LAI"/>
+                            <constraint firstItem="XWp-Li-I9C" firstAttribute="centerY" secondItem="yrR-9j-und" secondAttribute="centerY" id="sqI-b8-p5y"/>
+                            <constraint firstItem="niP-ow-Pji" firstAttribute="trailing" secondItem="N5a-Rp-ixO" secondAttribute="trailing" constant="5" id="t0n-Tz-LAI"/>
                             <constraint firstItem="N5a-Rp-ixO" firstAttribute="bottom" secondItem="niP-ow-Pji" secondAttribute="bottom" id="x0f-rS-OPb"/>
                         </constraints>
                     </view>
@@ -127,6 +148,8 @@
                     <connections>
                         <outlet property="buttonAddCollection" destination="BAT-g9-4cf" id="qtg-Kx-CqO"/>
                         <outlet property="collectionView" destination="N5a-Rp-ixO" id="Cra-Ih-KYS"/>
+                        <outlet property="flowLayout" destination="I9j-Ez-k6K" id="PeG-DU-7dy"/>
+                        <outlet property="indicatorLoading" destination="XWp-Li-I9C" id="D4k-3z-I7p"/>
                         <outlet property="mapView" destination="ZF5-as-PNX" id="tDV-Pt-hQL"/>
                     </connections>
                 </viewController>
@@ -154,9 +177,13 @@
         </scene>
     </scenes>
     <resources>
+        <image name="bookmark" catalog="system" width="112" height="128"/>
         <image name="trash.fill" catalog="system" width="121" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemOrangeColor">
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -71,26 +71,40 @@ extension LocaleProvider {
     completion: @escaping() -> Void
   ) {
     newTaskContext.performAndWait {
-      if let entity = NSEntityDescription.entity(forEntityName: "AlbumEntity", in: self.newTaskContext) {
-        let album = NSManagedObject(entity: entity, insertInto: self.newTaskContext)
-        album.setValue(albumModel.id, forKeyPath: "idAlbum")
-        album.setValue(albumModel.owner, forKeyPath: "owner")
-        album.setValue(albumModel.secret, forKeyPath: "secret")
-        album.setValue(albumModel.server, forKeyPath: "server")
-        album.setValue(albumModel.farm, forKey: "farm")
-        album.setValue(albumModel.title, forKeyPath: "title")
-        album.setValue(albumModel.ispublic, forKeyPath: "ispublic")
-        album.setValue(albumModel.isfriend, forKeyPath: "isfriend")
-        album.setValue(albumModel.isfamily, forKeyPath: "isfamily")
-        album.setValue(albumModel.image, forKeyPath: "image")
-        album.setValue(location, forKey: "location")
-        do {
-          try self.newTaskContext.save()
+      let fetchRequest = NSFetchRequest<LocationEntity>(entityName: "AlbumEntity")
+      fetchRequest.predicate = NSPredicate(format: "idAlbum == %@", albumModel.id)
+      fetchRequest.fetchLimit = 1
+      do {
+        let sameAlbum = try self.newTaskContext.fetch(fetchRequest)
+        if sameAlbum.first == nil, let entity = NSEntityDescription.entity(
+          forEntityName: "AlbumEntity",
+          in: self.newTaskContext
+        ) {
+          let album = NSManagedObject(entity: entity, insertInto: self.newTaskContext)
+          album.setValue(albumModel.id, forKeyPath: "idAlbum")
+          album.setValue(albumModel.owner, forKeyPath: "owner")
+          album.setValue(albumModel.secret, forKeyPath: "secret")
+          album.setValue(albumModel.server, forKeyPath: "server")
+          album.setValue(albumModel.farm, forKey: "farm")
+          album.setValue(albumModel.title, forKeyPath: "title")
+          album.setValue(albumModel.ispublic, forKeyPath: "ispublic")
+          album.setValue(albumModel.isfriend, forKeyPath: "isfriend")
+          album.setValue(albumModel.isfamily, forKeyPath: "isfamily")
+          album.setValue(albumModel.image, forKeyPath: "image")
+          album.setValue(location, forKey: "location")
+          do {
+            try self.newTaskContext.save()
+            completion()
+          } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+          }
+        } else {
           completion()
-        } catch let error as NSError {
-          print("Could not save. \(error), \(error.userInfo)")
         }
+      } catch {
+        print(error.localizedDescription)
       }
+
     }
   }
 
@@ -103,7 +117,7 @@ extension LocaleProvider {
       newTaskContext.performAndWait {
         if let entity = NSEntityDescription.entity(forEntityName: "LocationEntity", in: self.newTaskContext) {
           let location = NSManagedObject(entity: entity, insertInto: self.newTaskContext)
-          self.getMaxLocationId(with: self.newTaskContext) { id in
+          self.getMaxLocationId() { id in
             let idLocation = id+1
             location.setValue(idLocation, forKeyPath: "idLocation")
             location.setValue(latitude, forKeyPath: "latitude")
@@ -144,7 +158,6 @@ extension LocaleProvider {
   }
 
   func getMaxLocationId(
-    with taskContext: NSManagedObjectContext,
     completion: @escaping(_ maxId: Int) -> Void
   ) {
     let fetchRequest = NSFetchRequest<LocationEntity>(entityName: "LocationEntity")
@@ -152,7 +165,7 @@ extension LocaleProvider {
     fetchRequest.sortDescriptors = [sortDescriptor]
     fetchRequest.fetchLimit = 1
     do {
-      let lastLocation = try taskContext.fetch(fetchRequest)
+      let lastLocation = try self.newTaskContext.fetch(fetchRequest)
       if let location = lastLocation.first, let lastId = location.value(forKeyPath: "idLocation") as? Int {
         completion(lastId)
       } else {
@@ -163,25 +176,29 @@ extension LocaleProvider {
     }
   }
 
-  func getMaxAlbumId(
-    by location: LocationEntity,
-    with taskContext: NSManagedObjectContext,
-    completion: @escaping(_ maxId: Int) -> Void
+  func deleteLocation(
+    from location: LocationEntity,
+    completion: @escaping() -> Void
   ) {
-    let fetchRequest = NSFetchRequest<AlbumEntity>(entityName: "AlbumEntity")
-    let sortDescriptor = NSSortDescriptor(key: "idAlbum", ascending: false)
-    fetchRequest.sortDescriptors = [sortDescriptor]
-    fetchRequest.fetchLimit = 1
+    self.newTaskContext.delete(location)
     do {
-      let lastAlbum = try taskContext.fetch(fetchRequest)
-      if let album = lastAlbum.first, let lastId = album.value(forKeyPath: "idAlbum") as? Int {
-        completion(lastId)
-      } else {
-        completion(0)
-      }
+      try self.newTaskContext.save()
+      completion()
     } catch {
-      print(error.localizedDescription)
+      print(error)
     }
   }
 
+  func deleteAlbum(
+    from album: AlbumEntity,
+    completion: @escaping() -> Void
+  ) {
+    self.newTaskContext.delete(album)
+    do {
+      try self.newTaskContext.save()
+      completion()
+    } catch {
+      print(error)
+    }
+  }
 }

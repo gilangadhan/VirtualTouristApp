@@ -15,6 +15,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
   private let newPin = MKPointAnnotation()
 
   @IBOutlet var mapView: MKMapView!
+  @IBOutlet var indicatorLoading: UIActivityIndicatorView!
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -45,19 +46,36 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
   }
 
   private func loadLocations() {
+    self.indicatorLoading.isHidden = false
+    self.indicatorLoading.startAnimating()
     repository.getAllLocations { results in
       self.locations = results
       let annotations = results.map { location -> CustomPointAnnotation in
         let annotation = CustomPointAnnotation()
         annotation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
         annotation.tag = "\(location.idLocation)"
+
         return annotation
       }
-      self.mapView.addAnnotations(annotations)
+      DispatchQueue.main.async {
+        for annotation in self.mapView.annotations {
+          self.mapView.removeAnnotation(annotation)
+        }
+        self.mapView.addAnnotations(annotations)
+        let dest = annotations.last!.coordinate
+        let span = MKCoordinateSpan.init(latitudeDelta: 1, longitudeDelta: 1)
+        let region = MKCoordinateRegion(center: dest, span: span)
+        self.mapView.setRegion(region, animated: true)
+
+        self.indicatorLoading.isHidden = true
+        self.indicatorLoading.stopAnimating()
+      }
     }
   }
 
   private func addLocation(by coordinate: CLLocationCoordinate2D) {
+    self.indicatorLoading.isHidden = false
+    self.indicatorLoading.startAnimating()
     repository.addLocation(longitude: coordinate.longitude, latitude: coordinate.latitude) { idLocation in
       let annotation = CustomPointAnnotation()
       annotation.coordinate = coordinate
@@ -65,7 +83,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
       self.mapView.addAnnotation(annotation)
 
       DispatchQueue.main.async {
-        let alert = UIAlertController(title: "Successful", message: "Member updated.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Successful", message: "Location added.", preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
           self.navigationController?.popViewController(animated: true)
@@ -73,6 +91,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         self.present(alert, animated: true, completion: nil)
       }
     }
+    self.indicatorLoading.isHidden = true
+    self.indicatorLoading.stopAnimating()
   }
 
 }

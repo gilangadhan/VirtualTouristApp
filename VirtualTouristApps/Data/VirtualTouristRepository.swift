@@ -52,13 +52,30 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
     by location: LocationEntity,
     completion: @escaping() -> Void
   ) {
-    var isSuccess = false
-    for album in albums where album.isFavorite {
-      locale.addAlbum(location: location, albumModel: album) {
-        isSuccess = true
+    var isAddDatabaseSuccess = false
+    var isDeleteDatabaseSuccess = false
+
+    self.locale.getAllAlbum(by: location) { albumEntities in
+      if !albumEntities.isEmpty {
+        for favorite in albumEntities {
+          self.locale.deleteAlbum(from: favorite) {
+            isDeleteDatabaseSuccess = true
+          }
+        }
+      } else {
+        isDeleteDatabaseSuccess = true
       }
     }
-    if isSuccess {
+
+    if isDeleteDatabaseSuccess {
+      for album in albums {
+        self.locale.addAlbum(location: location, albumModel: album) {
+          isAddDatabaseSuccess = true
+        }
+      }
+    }
+
+    if isAddDatabaseSuccess {
       completion()
     }
   }
@@ -76,11 +93,13 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
         case .success(let photos):
           var photosModel = AlbumMapper.mapAlbumResponsesToModels(input: photos)
 
-          for album in albumModels {
+          for (indexAlbum, album) in albumModels.enumerated() {
+            albumModels[indexAlbum].isFavorite = true
             for (indexPhoto, photo) in photosModel.enumerated() where album.id == photo.id {
               photosModel.remove(at: indexPhoto)
             }
           }
+
           albumModels += photosModel
           completion(.success(albumModels))
         }
@@ -93,14 +112,24 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
     completion: @escaping(Result<Data, Error>) -> Void
   ) {
     network.downloadImage(url: url) { result in
-    switch result {
-    case .failure(let error):
-      completion(.failure(error))
-    case .success(let photo):
-      completion(.success(photo))
-    }
+      switch result {
+      case .failure(let error):
+        completion(.failure(error))
+      case .success(let photo):
+        completion(.success(photo))
+      }
     }
   }
+
+  func deleteLocation(
+    from location: LocationEntity,
+    completion: @escaping() -> Void
+  ) {
+    locale.deleteLocation(from: location) {
+      completion()
+    }
+  }
+
   func loadLocation(
     by idLocation: String,
     completion: @escaping(_ location: LocationEntity) -> Void

@@ -12,8 +12,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
 
   @IBOutlet weak var indicatorLoading: UIActivityIndicatorView!
   @IBOutlet weak var imageView: UIImageView!
-  @IBOutlet var imageFavorite: UIImageView!
-
+  @IBOutlet weak var deleteImage: UIImageView!
   func loadImage(url: String, completion: @escaping(_ image: Data) -> Void
 ) {
     self.indicatorLoading.isHidden = false

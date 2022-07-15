@@ -83,27 +83,30 @@
                                                 <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="7jM-O8-6L0">
                                                     <rect key="frame" x="54" y="54" width="20" height="20"/>
                                                 </activityIndicatorView>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bookmark" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="PFG-lF-s9X">
-                                                    <rect key="frame" x="108" y="0.0" width="20" height="20"/>
-                                                    <color key="tintColor" systemColor="systemOrangeColor"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="xmark" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="PFG-lF-s9X">
+                                                    <rect key="frame" x="0.0" y="2" width="128" height="124"/>
+                                                    <color key="tintColor" systemColor="systemRedColor"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="PFG-lF-s9X" secondAttribute="height" multiplier="1:1" id="HBu-0O-xx6"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="PFG-lF-s9X" firstAttribute="height" secondItem="KOO-cc-Tsw" secondAttribute="height" multiplier="1.00391" id="1Nd-aV-I9w"/>
                                                 <constraint firstAttribute="bottom" secondItem="KOO-cc-Tsw" secondAttribute="bottom" id="JP5-dl-K5g"/>
                                                 <constraint firstItem="PFG-lF-s9X" firstAttribute="top" secondItem="Rth-Jh-NDg" secondAttribute="top" id="NvV-AS-vc6"/>
                                                 <constraint firstItem="KOO-cc-Tsw" firstAttribute="top" secondItem="Rth-Jh-NDg" secondAttribute="top" id="PRr-2Q-vpi"/>
                                                 <constraint firstItem="7jM-O8-6L0" firstAttribute="centerX" secondItem="Rth-Jh-NDg" secondAttribute="centerX" id="SPW-By-kPl"/>
                                                 <constraint firstItem="7jM-O8-6L0" firstAttribute="centerY" secondItem="Rth-Jh-NDg" secondAttribute="centerY" id="T2q-Vi-JIS"/>
                                                 <constraint firstItem="KOO-cc-Tsw" firstAttribute="leading" secondItem="Rth-Jh-NDg" secondAttribute="leading" id="cvp-pk-Aws"/>
+                                                <constraint firstItem="PFG-lF-s9X" firstAttribute="width" secondItem="KOO-cc-Tsw" secondAttribute="height" multiplier="1:1" id="oAZ-1Q-Y9C"/>
                                                 <constraint firstAttribute="trailing" secondItem="PFG-lF-s9X" secondAttribute="trailing" id="oNc-qQ-CeL"/>
+                                                <constraint firstItem="PFG-lF-s9X" firstAttribute="width" secondItem="KOO-cc-Tsw" secondAttribute="width" id="rfC-Ap-w4I"/>
                                                 <constraint firstAttribute="trailing" secondItem="KOO-cc-Tsw" secondAttribute="trailing" id="xOa-Na-tey"/>
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <connections>
-                                            <outlet property="imageFavorite" destination="PFG-lF-s9X" id="aEF-Kk-n7a"/>
+                                            <outlet property="deleteImage" destination="PFG-lF-s9X" id="2GB-xG-7YD"/>
                                             <outlet property="imageView" destination="KOO-cc-Tsw" id="VvQ-f7-QPL"/>
                                             <outlet property="indicatorLoading" destination="7jM-O8-6L0" id="Jn2-OB-5hh"/>
                                         </connections>
@@ -177,13 +180,13 @@
         </scene>
     </scenes>
     <resources>
-        <image name="bookmark" catalog="system" width="112" height="128"/>
         <image name="trash.fill" catalog="system" width="121" height="128"/>
+        <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
-        <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

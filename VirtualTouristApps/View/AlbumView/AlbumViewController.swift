@@ -41,35 +41,31 @@ class AlbumViewController: UIViewController {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
+    self.indicatorLoading.isHidden = false
+    self.indicatorLoading.startAnimating()
+    self.buttonAddCollection.isEnabled = false
+
     updateView()
   }
 
   @IBAction func addCollection(_ sender: Any) {
     self.indicatorLoading.isHidden = false
     self.indicatorLoading.startAnimating()
+    self.buttonAddCollection.isEnabled = false
 
-    var favoriteAlbums: [AlbumModel] = []
-    for album in albums where album.isFavorite {
-      favoriteAlbums.append(album)
+
+    var deleteAlbums: [AlbumModel] = []
+    for album in albums where album.isDelete {
+      deleteAlbums.append(album)
     }
 
-    if !favoriteAlbums.isEmpty {
-      repository.addCollection(from: favoriteAlbums, by: self.location!) {
+    if !deleteAlbums.isEmpty {
+      guard let thisLocation = location else { return }
+      self.repository.deleteAlbums(from: deleteAlbums, by: thisLocation) {
         self.updateCollectionView()
       }
     } else {
-      self.indicatorLoading.isHidden = false
-      self.indicatorLoading.startAnimating()
-      let alert = UIAlertController(
-        title: "Warning!",
-        message: "Please select your favorite Image before adding Collection.",
-        preferredStyle: .alert
-      )
-      alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-        self.navigationController?.popViewController(animated: true)
-      })
-      self.present(alert, animated: true, completion: nil)
-
+      self.updateCollectionView()
     }
   }
 
@@ -86,23 +82,19 @@ class AlbumViewController: UIViewController {
   }
 
   private func updateView() {
-    self.indicatorLoading.isHidden = false
-    self.indicatorLoading.startAnimating()
-    self.buttonAddCollection.isEnabled = false
-
     if let id = idLocation {
       repository.loadLocation(by: id) { location in
         self.location = location
         self.updateMap()
-        self.updateCollectionView()
+        self.updateCollectionView(isFirst: true)
       }
     }
   }
 
-  private func updateCollectionView() {
+  private func updateCollectionView(isFirst: Bool = false) {
     guard let location = self.location else { return }
 
-    self.repository.loadOnlyFromNetwork(location: location) { result in
+    self.repository.loadAlbums(location: location, isFirst: isFirst) { result in
       switch result {
       case .failure(let error):
         print(error.localizedDescription)
@@ -148,13 +140,18 @@ extension AlbumViewController: UICollectionViewDataSource {
       return UICollectionViewCell()
     }
 
-    cell.loadImage(url: albums[indexPath.row].imageUrl()) { data in
-      self.albums[indexPath.row].image = data
+    let album = albums[indexPath.row]
+    cell.loadImage(url: album.imageUrl()) { data in
+      if let thisLocation = self.location {
+        self.repository.addAlbum(from: album, by: thisLocation) {
+          self.albums[indexPath.row].image = data
+        }
+      }
     }
 
-    cell.isSelected = self.albums[indexPath.row].isFavorite
+    cell.isSelected = album.isDelete
 
-    updateViewCell(cell: cell, isFavorite: self.albums[indexPath.row].isFavorite)
+    updateViewCell(cell: cell, isDelete: album.isDelete)
 
     return cell
   }
@@ -186,8 +183,8 @@ extension AlbumViewController: UICollectionViewDelegate {
     didSelectItemAt indexPath: IndexPath
   ) {
     guard let cell = collectionView.cellForItem(at: indexPath) as? AlbumCollectionViewCell else { return }
-    self.albums[indexPath.row].isFavorite = true
-    updateViewCell(cell: cell, isFavorite: true)
+    self.albums[indexPath.row].isDelete = true
+    updateViewCell(cell: cell, isDelete: true)
   }
 
   func collectionView(
@@ -195,20 +192,12 @@ extension AlbumViewController: UICollectionViewDelegate {
     didDeselectItemAt indexPath: IndexPath
   ) {
     guard let cell = collectionView.cellForItem(at: indexPath) as? AlbumCollectionViewCell else { return }
-    self.albums[indexPath.row].isFavorite = false
-    updateViewCell(cell: cell, isFavorite: false)
+    self.albums[indexPath.row].isDelete = false
+    updateViewCell(cell: cell, isDelete: false)
   }
 
-  func updateViewCell(cell: AlbumCollectionViewCell, isFavorite: Bool) {
-
-    if isFavorite {
-      cell.imageFavorite.isHidden = false
-      cell.imageFavorite.image = UIImage(systemName: "bookmark.fill")
-    } else {
-      cell.imageFavorite.isHidden = true
-      cell.imageFavorite.image = UIImage(systemName: "bookmark")
-    }
-
+  func updateViewCell(cell: AlbumCollectionViewCell, isDelete: Bool) {
+    cell.deleteImage.isHidden = !isDelete
   }
 
 }

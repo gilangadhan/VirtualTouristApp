@@ -13,7 +13,7 @@ struct AlbumModel: Codable {
   let title: String
   let ispublic, isfriend, isfamily: Int
   var image: Data?
-  var isFavorite = false
+  var isDelete = false
 
   func imageUrl() -> String {
     return "https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret)_q.jpg"

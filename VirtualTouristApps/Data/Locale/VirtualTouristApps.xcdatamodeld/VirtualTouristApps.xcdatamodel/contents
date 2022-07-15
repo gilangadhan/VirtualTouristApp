@@ -3,7 +3,7 @@
     <entity name="AlbumEntity" representedClassName="AlbumEntity" syncable="YES" codeGenerationType="class">
         <attribute name="farm" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="idAlbum" optional="YES" attributeType="String"/>
-        <attribute name="image" optional="YES" attributeType="Binary"/>
+        <attribute name="image" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
         <attribute name="isfamily" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="isfriend" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="ispublic" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -21,7 +21,7 @@
         <relationship name="albums" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AlbumEntity" inverseName="location" inverseEntity="AlbumEntity"/>
     </entity>
     <elements>
-        <element name="AlbumEntity" positionX="98.392578125" positionY="-19.67962646484375" width="128" height="208"/>
+        <element name="AlbumEntity" positionX="98.392578125" positionY="-19.67962646484375" width="128" height="194"/>
         <element name="LocationEntity" positionX="-63" positionY="-18" width="128" height="118"/>
     </elements>
 </model>

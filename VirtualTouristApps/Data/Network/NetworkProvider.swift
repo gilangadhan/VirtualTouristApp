@@ -18,7 +18,7 @@ extension NetworkProvider {
     longitude: Double,
     completion: @escaping(Result<[Photo], Error>) -> Void
   ) {
-    let url = URL(string: "\(Endpoints.Request.getPhotoByLocation.url)&lat=\(latitude)&lon=\(longitude)")
+    let url = URL(string: "\(Endpoints.Request.getPhotoByLocation.url)&lat=\(latitude)&lon=\(longitude)&page=\(Int.random(in: 1...10))")
     let request = URLRequest(url: url!)
 
     let task = URLSession.shared.dataTask(with: request) { maybeData, maybeResponse, maybeError in
@@ -31,6 +31,7 @@ extension NetworkProvider {
           if result.stat != "ok", result.photos.photo.count == 0 {
             completion(.failure(URLError.invalidResponse))
           } else {
+            print(result.photos.photo.count)
             completion(.success(result.photos.photo))
           }
         } catch {
@@ -106,7 +107,7 @@ enum Endpoints {
     public var url: String {
       switch self {
       case .getPhotoByLocation:
-        return "\(API.baseUrl)?method=\(API.methodName)&format=\(API.format)&api_key=\(API.APIKey)&radius=\(API.radius)"
+        return "\(API.baseUrl)?method=\(API.methodName)&format=\(API.format)&api_key=\(API.APIKey)&radius=\(API.radius)&per_page=20"
       }
     }
   }

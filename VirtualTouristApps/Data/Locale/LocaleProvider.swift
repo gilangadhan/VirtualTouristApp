@@ -71,7 +71,8 @@ extension LocaleProvider {
     completion: @escaping() -> Void
   ) {
     newTaskContext.performAndWait {
-      let fetchRequest = NSFetchRequest<LocationEntity>(entityName: "AlbumEntity")
+      let fetchRequest = NSFetchRequest<AlbumEntity>(entityName: "AlbumEntity")
+      fetchRequest.predicate = NSPredicate(format: "location == %@", location)
       fetchRequest.predicate = NSPredicate(format: "idAlbum == %@", albumModel.id)
       fetchRequest.fetchLimit = 1
       do {
@@ -200,5 +201,36 @@ extension LocaleProvider {
     } catch {
       print(error)
     }
+  }
+
+  func deleteAlbum(
+    from album: AlbumModel,
+    by location: LocationEntity,
+    completion: @escaping() -> Void
+  ) {
+    let fetchRequest = NSFetchRequest<AlbumEntity>(entityName: "AlbumEntity")
+    fetchRequest.predicate = NSPredicate(format: "location == %@", location)
+    let sortDescriptor = NSSortDescriptor(key: "idAlbum", ascending: false)
+    fetchRequest.sortDescriptors = [sortDescriptor]
+    fetchRequest.fetchLimit = 1
+    do {
+      let lastAlbum = try self.newTaskContext.fetch(fetchRequest)
+      if let result = lastAlbum.first {
+        self.newTaskContext.delete(result)
+        do {
+          try self.newTaskContext.save()
+          completion()
+        } catch {
+          print(error)
+        }
+      } else {
+        completion()
+      }
+    } catch {
+      print(error.localizedDescription)
+    }
+
+
+
   }
 }

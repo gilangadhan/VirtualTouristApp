@@ -22,7 +22,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
 
     mapView.delegate = self
     let longPress = UILongPressGestureRecognizer(target: self, action: #selector(mapLongPress(_:)))
-    longPress.minimumPressDuration = 1.0
+    longPress.minimumPressDuration = 0.5
     mapView.addGestureRecognizer(longPress)
   }
 
@@ -68,7 +68,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
           let region = MKCoordinateRegion(center: dest, span: span)
           self.mapView.setRegion(region, animated: true)
         }
-
 
         self.indicatorLoading.isHidden = true
         self.indicatorLoading.stopAnimating()

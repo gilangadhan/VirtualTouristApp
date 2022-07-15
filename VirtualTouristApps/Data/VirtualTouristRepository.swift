@@ -47,61 +47,48 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
     }
   }
 
-  func addCollection(
-    from albums: [AlbumModel],
+  func addAlbum(
+    from album: AlbumModel,
     by location: LocationEntity,
     completion: @escaping() -> Void
   ) {
-    var isAddDatabaseSuccess = false
-    var isDeleteDatabaseSuccess = false
-
-    self.locale.getAllAlbum(by: location) { albumEntities in
-      if !albumEntities.isEmpty {
-        for favorite in albumEntities {
-          self.locale.deleteAlbum(from: favorite) {
-            isDeleteDatabaseSuccess = true
-          }
-        }
-      } else {
-        isDeleteDatabaseSuccess = true
-      }
-    }
-
-    if isDeleteDatabaseSuccess {
-      for album in albums {
-        self.locale.addAlbum(location: location, albumModel: album) {
-          isAddDatabaseSuccess = true
-        }
-      }
-    }
-
-    if isAddDatabaseSuccess {
+    self.locale.addAlbum(location: location, albumModel: album) {
       completion()
     }
   }
 
-  func loadOnlyFromNetwork(
+  func loadLocation(
+    by idLocation: String,
+    completion: @escaping(_ location: LocationEntity) -> Void
+  ) {
+    self.locale.getLocation(by: idLocation) { location in
+      completion(location)
+    }
+  }
+
+  func loadAlbums(
     location: LocationEntity,
+    isFirst: Bool,
     completion: @escaping(Result<[AlbumModel], Error>) -> Void
   ) {
-    self.locale.getAllAlbum(by: location) { albums in
-      var albumModels = AlbumMapper.mapAlbumEntitiesToModels(input: albums)
+    self.locale.getAllAlbum(by: location) { albumEntity in
+      var albumModels = AlbumMapper.mapAlbumEntitiesToModels(input: albumEntity)
+
       self.network.getAllPhotos(latitude: location.latitude, longitude: location.longitude) { result in
         switch result {
         case .failure(let error):
           completion(.failure(error))
         case .success(let photos):
-          var photosModel = AlbumMapper.mapAlbumResponsesToModels(input: photos)
+          let photosModel = AlbumMapper.mapAlbumResponsesToModels(input: photos)
 
-          for (indexAlbum, album) in albumModels.enumerated() {
-            albumModels[indexAlbum].isFavorite = true
-            for (indexPhoto, photo) in photosModel.enumerated() where album.id == photo.id {
-              photosModel.remove(at: indexPhoto)
-            }
+          if albumModels.isEmpty {
+            completion(.success(photosModel))
+          } else if isFirst {
+            completion(.success(albumModels))
+          } else {
+            albumModels += photosModel
+            completion(.success(albumModels))
           }
-
-          albumModels += photosModel
-          completion(.success(albumModels))
         }
       }
     }
@@ -130,12 +117,20 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
     }
   }
 
-  func loadLocation(
-    by idLocation: String,
-    completion: @escaping(_ location: LocationEntity) -> Void
+  func deleteAlbums(
+    from albums: [AlbumModel],
+    by location: LocationEntity,
+    completion: @escaping() -> Void
   ) {
-    self.locale.getLocation(by: idLocation) { location in
-      completion(location)
+    var isSuccess = false
+    for album in albums {
+      locale.deleteAlbum(from: album, by: location) {
+        isSuccess = true
+      }
+    }
+    if isSuccess {
+      completion()
     }
   }
+
 }

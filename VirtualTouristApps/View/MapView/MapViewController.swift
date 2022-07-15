@@ -62,10 +62,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
           self.mapView.removeAnnotation(annotation)
         }
         self.mapView.addAnnotations(annotations)
-        let dest = annotations.last!.coordinate
-        let span = MKCoordinateSpan.init(latitudeDelta: 1, longitudeDelta: 1)
-        let region = MKCoordinateRegion(center: dest, span: span)
-        self.mapView.setRegion(region, animated: true)
+        if let lastLocation = annotations.last {
+          let dest = lastLocation.coordinate
+          let span = MKCoordinateSpan.init(latitudeDelta: 1, longitudeDelta: 1)
+          let region = MKCoordinateRegion(center: dest, span: span)
+          self.mapView.setRegion(region, animated: true)
+        }
+
 
         self.indicatorLoading.isHidden = true
         self.indicatorLoading.stopAnimating()

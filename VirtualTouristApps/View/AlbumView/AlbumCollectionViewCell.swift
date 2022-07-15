@@ -15,7 +15,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
   @IBOutlet weak var deleteImage: UIImageView!
   func loadImage(url: String, completion: @escaping(_ image: Data) -> Void
 ) {
-    self.indicatorLoading.isHidden = false
+    self.indicatorLoading.hidesWhenStopped = true
     self.indicatorLoading.startAnimating()
     repository.downloadImage(url: url) { result in
       DispatchQueue.main.async {
@@ -28,7 +28,6 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         if let image = self.imageView.image, let data = image.pngData() {
           completion(data)
           self.indicatorLoading.stopAnimating()
-          self.indicatorLoading.isHidden = true
         }
       }
     }

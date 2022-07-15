@@ -72,7 +72,6 @@ extension LocaleProvider {
   ) {
     newTaskContext.performAndWait {
       let fetchRequest = NSFetchRequest<AlbumEntity>(entityName: "AlbumEntity")
-      fetchRequest.predicate = NSPredicate(format: "location == %@", location)
       fetchRequest.predicate = NSPredicate(format: "idAlbum == %@", albumModel.id)
       fetchRequest.fetchLimit = 1
       do {

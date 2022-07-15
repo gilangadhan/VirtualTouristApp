@@ -53,6 +53,7 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
     completion: @escaping() -> Void
   ) {
     self.locale.addAlbum(location: location, albumModel: album) {
+      
       completion()
     }
   }
@@ -77,9 +78,13 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
       self.network.getAllPhotos(latitude: location.latitude, longitude: location.longitude) { result in
         switch result {
         case .failure(let error):
-          completion(.failure(error))
+          if albumModels.isEmpty {
+            completion(.failure(error))
+          } else {
+            completion(.success(albumModels))
+          }
         case .success(let photos):
-          let photosModel = AlbumMapper.mapAlbumResponsesToModels(input: photos)
+          let photosModel = AlbumMapper.mapAlbumResponsesToModels(input: photos).shuffled()
 
           if albumModels.isEmpty {
             completion(.success(photosModel))

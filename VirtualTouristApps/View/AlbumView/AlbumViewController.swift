@@ -41,19 +41,21 @@ class AlbumViewController: UIViewController {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    self.indicatorLoading.isHidden = false
-    self.indicatorLoading.startAnimating()
-    self.buttonAddCollection.isEnabled = false
+    indicatorLoading.hidesWhenStopped = true
+    indicatorLoading.startAnimating()
+    buttonAddCollection.isEnabled = false
 
     updateView()
   }
 
   @IBAction func addCollection(_ sender: Any) {
-    self.indicatorLoading.isHidden = false
     self.indicatorLoading.startAnimating()
     self.buttonAddCollection.isEnabled = false
+    self.updateCollectionView()
+  }
 
-
+  @IBAction func removeLocation(_ sender: Any) {
+    self.indicatorLoading.startAnimating()
     var deleteAlbums: [AlbumModel] = []
     for album in albums where album.isDelete {
       deleteAlbums.append(album)
@@ -62,23 +64,29 @@ class AlbumViewController: UIViewController {
     if !deleteAlbums.isEmpty {
       guard let thisLocation = location else { return }
       self.repository.deleteAlbums(from: deleteAlbums, by: thisLocation) {
-        self.updateCollectionView()
+        for deleteAlbum in deleteAlbums {
+          for (index, album) in self.albums.enumerated() where deleteAlbum.id == album.id {
+            self.albums.remove(at: index)
+          }
+        }
+        self.collectionView.reloadData()
       }
     } else {
-      self.updateCollectionView()
+      let alert = UIAlertController(
+        title: "Warning!",
+        message: "Please select your Image before delete Collection.",
+        preferredStyle: .alert
+      )
+      alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+        self.navigationController?.popViewController(animated: true)
+      })
+      self.present(alert, animated: true, completion: nil)
     }
-  }
-
-  @IBAction func removeLocation(_ sender: Any) {
-    self.indicatorLoading.isHidden = false
-    self.indicatorLoading.startAnimating()
-
-    guard let thisLocation = location else { return }
-    repository.deleteLocation(from: thisLocation) {
-      self.navigationController?.popViewController(animated: true)
-      self.indicatorLoading.isHidden = true
-      self.indicatorLoading.stopAnimating()
-    }
+    //    guard let thisLocation = location else { return }
+    //    repository.deleteLocation(from: thisLocation) {
+    //      self.navigationController?.popViewController(animated: true)
+    //      self.indicatorLoading.stopAnimating()
+    //    }
   }
 
   private func updateView() {
@@ -97,14 +105,14 @@ class AlbumViewController: UIViewController {
     self.repository.loadAlbums(location: location, isFirst: isFirst) { result in
       switch result {
       case .failure(let error):
-        print(error.localizedDescription)
-        self.indicatorLoading.isHidden = true
-        self.indicatorLoading.stopAnimating()
+        DispatchQueue.main.async {
+          print(error.localizedDescription)
+          self.indicatorLoading.stopAnimating()
+        }
       case .success(let photos):
         self.albums = photos
         DispatchQueue.main.async {
           self.collectionView.reloadData()
-          self.indicatorLoading.isHidden = true
           self.indicatorLoading.stopAnimating()
           self.buttonAddCollection.isEnabled = true
         }
@@ -141,13 +149,18 @@ extension AlbumViewController: UICollectionViewDataSource {
     }
 
     let album = albums[indexPath.row]
-    cell.loadImage(url: album.imageUrl()) { data in
-      if let thisLocation = self.location {
-        self.repository.addAlbum(from: album, by: thisLocation) {
-          self.albums[indexPath.row].image = data
+    if let image = album.image {
+      cell.imageView.image = UIImage(data: image)
+    } else {
+      cell.loadImage(url: album.imageUrl()) { data in
+        if let thisLocation = self.location {
+          self.repository.addAlbum(from: album, by: thisLocation) {
+            self.albums[indexPath.row].image = data
+          }
         }
       }
     }
+
 
     cell.isSelected = album.isDelete
 

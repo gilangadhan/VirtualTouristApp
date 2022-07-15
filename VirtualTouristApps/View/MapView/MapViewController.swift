@@ -28,6 +28,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
+    indicatorLoading.hidesWhenStopped = true
+
     loadLocations()
   }
 
@@ -46,7 +48,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
   }
 
   private func loadLocations() {
-    self.indicatorLoading.isHidden = false
     self.indicatorLoading.startAnimating()
     repository.getAllLocations { results in
       self.locations = results
@@ -69,14 +70,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
           self.mapView.setRegion(region, animated: true)
         }
 
-        self.indicatorLoading.isHidden = true
         self.indicatorLoading.stopAnimating()
       }
     }
   }
 
   private func addLocation(by coordinate: CLLocationCoordinate2D) {
-    self.indicatorLoading.isHidden = false
     self.indicatorLoading.startAnimating()
     repository.addLocation(longitude: coordinate.longitude, latitude: coordinate.latitude) { idLocation in
       let annotation = CustomPointAnnotation()
@@ -93,7 +92,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate {
         self.present(alert, animated: true, completion: nil)
       }
     }
-    self.indicatorLoading.isHidden = true
     self.indicatorLoading.stopAnimating()
   }
 

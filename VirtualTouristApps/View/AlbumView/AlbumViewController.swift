@@ -21,6 +21,7 @@ class AlbumViewController: UIViewController {
   @IBOutlet var collectionView: UICollectionView!
   @IBOutlet var flowLayout: UICollectionViewFlowLayout!
   @IBOutlet var indicatorLoading: UIActivityIndicatorView!
+  @IBOutlet var infoLabel: UILabel!
 
   var idLocation: String?
 
@@ -41,6 +42,7 @@ class AlbumViewController: UIViewController {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
+    self.infoLabel.isHidden = !self.albums.isEmpty
     indicatorLoading.hidesWhenStopped = true
     indicatorLoading.startAnimating()
     buttonAddCollection.isEnabled = false
@@ -55,13 +57,13 @@ class AlbumViewController: UIViewController {
   }
 
   @IBAction func removeLocation(_ sender: Any) {
-    self.indicatorLoading.startAnimating()
     var deleteAlbums: [AlbumModel] = []
     for album in albums where album.isDelete {
       deleteAlbums.append(album)
     }
 
     if !deleteAlbums.isEmpty {
+      self.indicatorLoading.startAnimating()
       guard let thisLocation = location else { return }
       self.repository.deleteAlbums(from: deleteAlbums, by: thisLocation) {
         for deleteAlbum in deleteAlbums {
@@ -70,6 +72,8 @@ class AlbumViewController: UIViewController {
           }
         }
         self.collectionView.reloadData()
+        self.infoLabel.isHidden = !self.albums.isEmpty
+        self.indicatorLoading.stopAnimating()
       }
     } else {
       let alert = UIAlertController(
@@ -78,15 +82,10 @@ class AlbumViewController: UIViewController {
         preferredStyle: .alert
       )
       alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-        self.navigationController?.popViewController(animated: true)
+        alert.dismiss(animated: true)
       })
       self.present(alert, animated: true, completion: nil)
     }
-    //    guard let thisLocation = location else { return }
-    //    repository.deleteLocation(from: thisLocation) {
-    //      self.navigationController?.popViewController(animated: true)
-    //      self.indicatorLoading.stopAnimating()
-    //    }
   }
 
   private func updateView() {
@@ -114,6 +113,7 @@ class AlbumViewController: UIViewController {
         DispatchQueue.main.async {
           self.collectionView.reloadData()
           self.indicatorLoading.stopAnimating()
+          self.infoLabel.isHidden = !self.albums.isEmpty
           self.buttonAddCollection.isEnabled = true
         }
       }

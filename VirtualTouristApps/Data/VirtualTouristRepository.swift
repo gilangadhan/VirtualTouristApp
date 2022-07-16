@@ -73,7 +73,7 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
     completion: @escaping(Result<[AlbumModel], Error>) -> Void
   ) {
     self.locale.getAllAlbum(by: location) { albumEntity in
-      var albumModels = AlbumMapper.mapAlbumEntitiesToModels(input: albumEntity)
+      let albumModels = AlbumMapper.mapAlbumEntitiesToModels(input: albumEntity)
 
       self.network.getAllPhotos(latitude: location.latitude, longitude: location.longitude) { result in
         switch result {
@@ -91,8 +91,9 @@ extension VirtualToursitRepository: VirtualToursitRepositoryProtocol {
           } else if isFirst {
             completion(.success(albumModels))
           } else {
-            albumModels += photosModel
-            completion(.success(albumModels))
+            self.deleteAlbums(from: albumModels, by: location) {
+              completion(.success(photosModel))
+            }
           }
         }
       }

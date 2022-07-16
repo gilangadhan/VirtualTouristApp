@@ -123,6 +123,12 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="XWp-Li-I9C">
                                 <rect key="frame" x="150" y="230" width="20" height="20"/>
                             </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Collections is Empty" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jOP-3B-A0b">
+                                <rect key="frame" x="83" y="229.5" width="154.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="niP-ow-Pji"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -132,8 +138,10 @@
                             <constraint firstItem="niP-ow-Pji" firstAttribute="trailing" secondItem="BAT-g9-4cf" secondAttribute="trailing" constant="8" id="QRm-Ag-wEU"/>
                             <constraint firstItem="BAT-g9-4cf" firstAttribute="leading" secondItem="niP-ow-Pji" secondAttribute="leading" constant="8" id="R04-0R-0I1"/>
                             <constraint firstItem="N5a-Rp-ixO" firstAttribute="leading" secondItem="niP-ow-Pji" secondAttribute="leading" constant="5" id="RSk-Gi-XgA"/>
+                            <constraint firstItem="jOP-3B-A0b" firstAttribute="centerY" secondItem="yrR-9j-und" secondAttribute="centerY" id="ScA-mh-XvB"/>
                             <constraint firstItem="ZF5-as-PNX" firstAttribute="top" secondItem="niP-ow-Pji" secondAttribute="top" id="Tc8-DC-bwf"/>
                             <constraint firstItem="niP-ow-Pji" firstAttribute="bottom" secondItem="BAT-g9-4cf" secondAttribute="bottom" constant="8" id="ZVG-E8-ghL"/>
+                            <constraint firstItem="jOP-3B-A0b" firstAttribute="centerX" secondItem="yrR-9j-und" secondAttribute="centerX" id="dSS-iS-6Jd"/>
                             <constraint firstItem="niP-ow-Pji" firstAttribute="trailing" secondItem="ZF5-as-PNX" secondAttribute="trailing" id="eRM-eh-ipL"/>
                             <constraint firstItem="N5a-Rp-ixO" firstAttribute="firstBaseline" secondItem="ZF5-as-PNX" secondAttribute="baseline" constant="8" symbolType="layoutAnchor" id="gEu-cV-Up0"/>
                             <constraint firstItem="XWp-Li-I9C" firstAttribute="centerY" secondItem="yrR-9j-und" secondAttribute="centerY" id="sqI-b8-p5y"/>
@@ -153,6 +161,7 @@
                         <outlet property="collectionView" destination="N5a-Rp-ixO" id="Cra-Ih-KYS"/>
                         <outlet property="flowLayout" destination="I9j-Ez-k6K" id="PeG-DU-7dy"/>
                         <outlet property="indicatorLoading" destination="XWp-Li-I9C" id="D4k-3z-I7p"/>
+                        <outlet property="infoLabel" destination="jOP-3B-A0b" id="epW-Uu-bwY"/>
                         <outlet property="mapView" destination="ZF5-as-PNX" id="tDV-Pt-hQL"/>
                     </connections>
                 </viewController>
@@ -166,7 +175,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="aPk-A9-rrG" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="n5a-5d-mKV">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
